@@ -1,5 +1,5 @@
 # searchable-fileupload
-NodeJS demo for integrating Express, MongoDB GridFS upload and Metadata search with Atlas Search
+* NodeJS demo for integrating Express, MongoDB GridFS upload and Metadata search with Atlas Search
 
 ## Overview
 1. There are two web pages in this project:
@@ -33,6 +33,7 @@ node server.js
 ## Full text Search
 This simple demo focus on the file metadata search with large files. Also supports samll and simple format's file content full text search with Atlas Search.
 ### Atlas Search Index
+Set up the Atlas Search index with the following JSON definition in Atlas UI
 ```json
 {
   "mappings": {
@@ -100,71 +101,69 @@ This simple demo focus on the file metadata search with large files. Also suppor
 ```
 
 ###  Atlas Search Query
+* We can search the uploaded files by metadata, and boost the wanted fields' search scores for prioritizing the results. 
 ```json
-
 [
-      {
+    {
         $search: {
-          index: "default",
-          compound: {
+            index: "default",
+            compound: {
             should: [
-              {
+                {
                 autocomplete: {
-                  query: q,
-                  path: "metadata.name",
-                  fuzzy: {
+                    query: q,
+                    path: "metadata.name",
+                    fuzzy: {
                     maxEdits: 1,
                     prefixLength: 2
-                  }
+                    }
                 }
-              },
-              {
+                },
+                {
                 text: {
-                  query: q,
-                  path: [
+                    query: q,
+                    path: [
                     "metadata.keywords",
-                    "metadata.type",
                     "metadata.sourcePath",
                     "metadata.content"
-                  ],
-                  score: { boost: { value: 2 } },
-                  fuzzy: { maxEdits: 1, prefixLength: 2 }
+                    ],
+                    score: { boost: { value: 2 } },
+                    fuzzy: { maxEdits: 1, prefixLength: 2 }
                 }
-              },
-              {
+                },
+                {
                 text: {
-                  query: q,
-                  path: "metadata.briefing",
-                  score: { boost: { value: 2 } },
-                  fuzzy: { maxEdits: 1, prefixLength: 2 }
+                    query: q,
+                    path: "metadata.briefing",
+                    score: { boost: { value: 2 } },
+                    fuzzy: { maxEdits: 1, prefixLength: 2 }
                 }
-              }
+                }
             ],
             minimumShouldMatch: 1
-          },
-          highlight: {
+            },
+            highlight: {
             path: [
-              "metadata.name",
-              "metadata.type",
-              "metadata.keywords",
-              "metadata.briefing",
-              "metadata.sourcePath",
-              "metadata.content"
+                "metadata.name",
+                "metadata.keywords",
+                "metadata.briefing",
+                "metadata.sourcePath",
+                "metadata.content"
             ]
-          }
+            }
         }
-      },
-      { $limit: 50 },
-      {
+        },
+        { $limit: 50 },
+        {
         $project: {
-          _id: 1,
-          filename: 1,
-          uploadDate: 1,
-          length: 1,
-          metadata: 1,
-          score: { $meta: "searchScore" },
-          highlights: { $meta: "searchHighlights" }
+            _id: 1,
+            filename: 1,
+            uploadDate: 1,
+            length: 1,
+            metadata: 1,
+            score: { $meta: "searchScore" },
+            highlights: { $meta: "searchHighlights" }
         }
-      }
-    ]
+    }
+]
 ```
