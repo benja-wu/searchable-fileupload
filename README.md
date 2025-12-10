@@ -45,11 +45,32 @@ Set up the Atlas Search index with the following JSON definition in Atlas UI
       "metadata": {
         "fields": {
           "briefing": {
-            "analyzer": "briefing_ngram",
+            "multi": {
+              "gram": {
+                "analyzer": "briefing_ngram",
+                "type": "string"
+              },
+              "words": {
+                "analyzer": "lucene.smartcn",
+                "searchAnalyzer": "lucene.smartcn",
+                "type": "string"
+              }
+            },
             "type": "string"
           },
           "content": {
-            "analyzer": "lucene.standard",
+            "multi": {
+              "chinese": {
+                "analyzer": "lucene.smartcn",
+                "searchAnalyzer": "lucene.smartcn",
+                "type": "string"
+              },
+              "english": {
+                "analyzer": "lucene.standard",
+                "searchAnalyzer": "lucene.standard",
+                "type": "string"
+              }
+            },
             "type": "string"
           },
           "keywords": {
@@ -58,7 +79,7 @@ Set up the Atlas Search index with the following JSON definition in Atlas UI
           },
           "name": [
             {
-              "analyzer": "lucene.standard",
+              "analyzer": "lucene.smartcn",
               "type": "string"
             },
             {
