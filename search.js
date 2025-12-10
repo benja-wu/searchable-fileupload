@@ -129,7 +129,7 @@ module.exports = function registerSearchRoutes(app, db, bucket) {
       <html>
       <head>
         <meta charset="utf-8" />
-        <title>GridFS Search (with Highlights)</title>
+        <title> Atlas Search (with Highlights)</title>
         <style>
           body { font-family: system-ui, sans-serif; margin: 20px; max-width: 1200px; }
           table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 0.9rem; }
